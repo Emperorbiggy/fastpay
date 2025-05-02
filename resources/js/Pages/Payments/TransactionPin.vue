@@ -83,105 +83,120 @@
           >
             Confirm
           </button>
+
+          <!-- Back Home and Download Receipt -->
+          <div class="flex justify-between mt-4">
+            <button @click="goHome" class="text-[#8541f5] text-sm">Back Home</button>
+            <button @click="downloadReceipt" class="text-[#8541f5] text-sm">Download Receipt</button>
+          </div>
         </div>
       </div>
     </div>
   </template>
 
-<script setup>
-import { ref } from 'vue'
-import { router } from '@inertiajs/vue3'
-import axios from 'axios'
+  <script setup>
+  import { ref } from 'vue'
+  import { router } from '@inertiajs/vue3'
+  import axios from 'axios'
 
-const pin = ref('')
-const loading = ref(false) // Loading state
+  const pin = ref('')
+  const loading = ref(false) // Loading state
 
-const addPin = (number) => {
-  if (pin.value.length < 4) {
-    pin.value += number
-  }
-}
-
-const removePin = () => {
-  pin.value = pin.value.slice(0, -1)
-}
-
-const submitTransaction = async () => {
-  if (pin.value.length !== 4) return; // Ensure pin is 4 digits
-
-  loading.value = true; // Show loader
-
-  try {
-    // Make a request to verify the PIN
-    const response = await axios.post('/api/verify-pin', { pin: pin.value }, {
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token')}` // Bearer token from local storage
-      }
-    });
-
-    if (response.data.success) {
-      // PIN is verified successfully, now retrieve the transfer data from local storage
-      const transferData = JSON.parse(localStorage.getItem('transferData'));
-
-      // If the type is 'wallet', proceed with the transfer request
-      if (transferData && transferData.type === 'wallet') {
-        const { amount, user_id, description } = transferData;
-
-        // Send the transfer data to the /api/transfer endpoint
-        const transferResponse = await axios.post('/api/transfer', {
-          amount,
-          user_id,
-          description
-        }, {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}` // Bearer token from local storage
-          }
-        });
-
-        // Handle transfer success response
-        if (transferResponse.data.message === 'Transfer successful!') {
-          // Redirect to the success page
-          router.visit('/success');
-        } else {
-          // Handle transfer failure
-          alert(transferResponse.data.message || 'Transfer failed');
-        }
-      } else if (transferData && transferData.type === 'bank') {
-        // If the type is 'bank', redirect to the success page immediately
-        router.visit('/success');
-      }
-    } else {
-      alert(response.data.message || 'PIN verification failed');
+  const addPin = (number) => {
+    if (pin.value.length < 4) {
+      pin.value += number
     }
-  } catch (error) {
-    console.error('An error occurred during the transaction:', error);
-    alert('An error occurred. Please try again.');
-  } finally {
-    loading.value = false; // Hide loader after completion
   }
-}
 
-const goBack = () => {
-  window.history.back()
-}
-</script>
+  const removePin = () => {
+    pin.value = pin.value.slice(0, -1)
+  }
 
- <style scoped>
- body {
-   font-family: 'Inter', sans-serif;
- }
- .loader {
-   width: 50px;
-   height: 50px;
-   border: 4px solid #8541f5;
-   border-top: 4px solid transparent;
-   border-radius: 50%;
-   animation: spin 0.8s linear infinite;
- }
+  const submitTransaction = async () => {
+    if (pin.value.length !== 4) return; // Ensure pin is 4 digits
 
- @keyframes spin {
-   to {
-     transform: rotate(360deg);
-   }
- }
- </style>
+    loading.value = true; // Show loader
+
+    try {
+      // Make a request to verify the PIN
+      const response = await axios.post('/api/verify-pin', { pin: pin.value }, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}` // Bearer token from local storage
+        }
+      });
+
+      if (response.data.success) {
+        // PIN is verified successfully, now retrieve the transfer data from local storage
+        const transferData = JSON.parse(localStorage.getItem('transferData'));
+
+        // If the type is 'wallet', proceed with the transfer request
+        if (transferData && transferData.type === 'wallet') {
+          const { amount, user_id, description } = transferData;
+
+          // Send the transfer data to the /api/transfer endpoint
+          const transferResponse = await axios.post('/api/transfer', {
+            amount,
+            user_id,
+            description
+          }, {
+            headers: {
+              'Authorization': `Bearer ${localStorage.getItem('token')}` // Bearer token from local storage
+            }
+          });
+
+          // Handle transfer success response
+          if (transferResponse.data.message === 'Transfer successful!') {
+            // Redirect to the success page
+            router.visit('/success');
+          } else {
+            // Handle transfer failure
+            alert(transferResponse.data.message || 'Transfer failed');
+          }
+        } else if (transferData && transferData.type === 'bank') {
+          // If the type is 'bank', redirect to the success page immediately
+          router.visit('/success');
+        }
+      } else {
+        alert(response.data.message || 'PIN verification failed');
+      }
+    } catch (error) {
+      console.error('An error occurred during the transaction:', error);
+      alert('An error occurred. Please try again.');
+    } finally {
+      loading.value = false; // Hide loader after completion
+    }
+  }
+
+  const goBack = () => {
+    window.history.back()
+  }
+
+  const goHome = () => {
+    router.visit('/dashboard');
+  }
+
+  const downloadReceipt = () => {
+    // No action for now
+    alert("Download receipt feature coming soon!");
+  }
+  </script>
+
+  <style scoped>
+  body {
+    font-family: 'Inter', sans-serif;
+  }
+  .loader {
+    width: 50px;
+    height: 50px;
+    border: 4px solid #8541f5;
+    border-top: 4px solid transparent;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  </style>

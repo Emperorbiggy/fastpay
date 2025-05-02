@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
+
 class AuthController extends Controller
 {
     public function register(Request $request)
@@ -89,6 +90,50 @@ class AuthController extends Controller
             'user' => $user
         ]);
     }
+    use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Hash;
+use App\Models\User;
+
+public function login(Request $request)
+{
+    // Validate email and password
+    $request->validate([
+        'email' => 'required|email',
+        'password' => 'required|string',
+    ]);
+
+    // Log the incoming request data (email and password)
+    Log::info('Login attempt data:', [
+        'email' => $request->email,
+        'password' => $request->password,  // Be cautious logging sensitive data (avoid logging plain passwords in production)
+    ]);
+
+    // Attempt to authenticate the user
+    $user = User::where('email', $request->email)->first();
+
+    if (!$user || !Hash::check($request->password, $user->password)) {
+        Log::warning('Invalid login attempt for email:', ['email' => $request->email]);
+        return response()->json(['message' => 'Invalid credentials'], 401);
+    }
+
+    // Log the user details if authentication is successful
+    Log::info('User logged in successfully:', [
+        'user_id' => $user->id,
+        'email' => $user->email,
+        'name' => $user->name,  // Log other relevant user information
+    ]);
+
+    // Create token for the authenticated user
+    $token = $user->createToken('auth_token')->plainTextToken;
+
+    // Return the token and user details in the response
+    return response()->json([
+        'message' => 'Login successful',
+        'token' => $token,
+        'user' => $user,
+    ]);
+}
+
 
     /**
      * Update user information.
