@@ -8,7 +8,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;  // Correct location for the Log facade
+use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
@@ -25,8 +25,7 @@ class AuthController extends Controller
 
         // Generate unique user_id
         $user_id = $this->generateUniqueUserId();
-        $verification_code = 1234; // You should replace this with a dynamic OTP generation (e.g., a random 4-digit number)
-
+        $verification_code = 1234;
         // Create user
         $user = User::create([
             'user_id' => $user_id,
@@ -98,7 +97,7 @@ class AuthController extends Controller
             'password' => 'required|string',
         ]);
 
-        
+
 
         // Attempt to authenticate the user
         $user = User::where('email', $request->email)->first();
@@ -131,7 +130,7 @@ class AuthController extends Controller
      */
     public function updateUserInfo(Request $request)
     {
-        // Get user from the token (assuming you're using Sanctum or Passport)
+        // Get user from the token
         $user = Auth::user();
 
         if (!$user) {
@@ -226,17 +225,16 @@ class AuthController extends Controller
     {
         // Get the current year (4 digits) and day of the year (3 digits)
         $year = date('Y'); // Get current year, e.g., "2025"
-        $dayOfYear = str_pad(date('z') + 1, 3, '0', STR_PAD_LEFT); // Get day of year, e.g., "150"
-
+        $dayOfYear = str_pad(date('z') + 1, 3, '0', STR_PAD_LEFT);
         // Generate a random 4-digit number
-        $randomNumber = str_pad(rand(0, 9999), 4, '0', STR_PAD_LEFT); // Ensure it's 4 digits, e.g., "1234"
+        $randomNumber = str_pad(rand(0, 9999), 4, '0', STR_PAD_LEFT);
 
         // Concatenate to form the user_id
         $userId = $year . $dayOfYear . $randomNumber;
 
-        // Check for uniqueness (optional, but recommended)
+        // Check for uniqueness
         while (User::where('user_id', $userId)->exists()) {
-            $randomNumber = str_pad(rand(0, 9999), 4, '0', STR_PAD_LEFT); // Regenerate the random part if not unique
+            $randomNumber = str_pad(rand(0, 9999), 4, '0', STR_PAD_LEFT); 
             $userId = $year . $dayOfYear . $randomNumber;
         }
 

@@ -32,14 +32,14 @@ class TransactionController extends Controller
         // Log the wallet balance and currency
         Log::info('Fetched balance:', [
             'user_id' => $user->id,
-            'balance' => $wallet->amount, // Use `amount` here since that’s the column name
-            'currency' => $wallet->currency ?? 'NGN' // Optional fallback
+            'balance' => $wallet->amount,
+            'currency' => $wallet->currency ?? 'NGN'
         ]);
 
         // Return the balance response
         return response()->json([
-            'balance' => $wallet->amount, // Use `amount` here as well
-            'currency' => $wallet->currency ?? 'NGN' // Optional fallback
+            'balance' => $wallet->amount,
+            'currency' => $wallet->currency ?? 'NGN'
         ]);
     }
     public function verifyAccountId(Request $request, $user_id)
@@ -126,7 +126,7 @@ public function InterTransfer(Request $request)
             'description' => $request->description, // Transaction description
             'account_number' => $recipient->user_id, // The recipient's user_id
             'account_name' => $recipient->full_name, // The recipient's full name
-            'bank_name' => 'N/A', // Assuming no bank info needed, modify as necessary
+            'bank_name' => 'N/A', // Assuming no bank info needed
         ]);
 
         // Commit the transaction

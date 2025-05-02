@@ -3,7 +3,7 @@
       <div class="w-full max-w-lg bg-white rounded-lg shadow-md p-8">
         <!-- Logo centered -->
         <div class="flex justify-center mb-6">
-          <img src="/images/logo.png" alt="Logo" class="h-12" />
+          <img src="/images/logo.svg" alt="Logo" class="h-12" />
         </div>
 
         <!-- Heading -->
