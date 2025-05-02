@@ -8,8 +8,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-
+use Illuminate\Support\Facades\Log;  // Correct location for the Log facade
 
 class AuthController extends Controller
 {
@@ -90,50 +89,42 @@ class AuthController extends Controller
             'user' => $user
         ]);
     }
-    use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Hash;
-use App\Models\User;
 
-public function login(Request $request)
-{
-    // Validate email and password
-    $request->validate([
-        'email' => 'required|email',
-        'password' => 'required|string',
-    ]);
+    public function login(Request $request)
+    {
+        // Validate email and password
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|string',
+        ]);
 
-    // Log the incoming request data (email and password)
-    Log::info('Login attempt data:', [
-        'email' => $request->email,
-        'password' => $request->password,  // Be cautious logging sensitive data (avoid logging plain passwords in production)
-    ]);
+        
 
-    // Attempt to authenticate the user
-    $user = User::where('email', $request->email)->first();
+        // Attempt to authenticate the user
+        $user = User::where('email', $request->email)->first();
 
-    if (!$user || !Hash::check($request->password, $user->password)) {
-        Log::warning('Invalid login attempt for email:', ['email' => $request->email]);
-        return response()->json(['message' => 'Invalid credentials'], 401);
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            Log::warning('Invalid login attempt for email:', ['email' => $request->email]);
+            return response()->json(['message' => 'Invalid credentials'], 401);
+        }
+
+        // Log the user details if authentication is successful
+        Log::info('User logged in successfully:', [
+            'user_id' => $user->id,
+            'email' => $user->email,
+            'name' => $user->name,  // Log other relevant user information
+        ]);
+
+        // Create token for the authenticated user
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        // Return the token and user details in the response
+        return response()->json([
+            'message' => 'Login successful',
+            'token' => $token,
+            'user' => $user,
+        ]);
     }
-
-    // Log the user details if authentication is successful
-    Log::info('User logged in successfully:', [
-        'user_id' => $user->id,
-        'email' => $user->email,
-        'name' => $user->name,  // Log other relevant user information
-    ]);
-
-    // Create token for the authenticated user
-    $token = $user->createToken('auth_token')->plainTextToken;
-
-    // Return the token and user details in the response
-    return response()->json([
-        'message' => 'Login successful',
-        'token' => $token,
-        'user' => $user,
-    ]);
-}
-
 
     /**
      * Update user information.
@@ -167,91 +158,88 @@ public function login(Request $request)
             'user' => $user
         ]);
     }
+
     public function updatePin(Request $request)
-{
-    // Get token from request headers
-    $token = $request->bearerToken();
-    Log::info('Token received:', ['token' => $token]);
+    {
+        // Get token from request headers
+        $token = $request->bearerToken();
+        Log::info('Token received:', ['token' => $token]);
 
-    // Get authenticated user
-    $user = Auth::user();
+        // Get authenticated user
+        $user = Auth::user();
 
-    if (!$user) {
-        Log::warning('No authenticated user found.');
-        return response()->json(['message' => 'Unauthorized.'], 401);
-    }
-
-    // Log the authenticated user object
-    Log::info('Authenticated User:', $user->toArray());
-
-    // Validate the PIN
-    $request->validate([
-        'pin' => 'required|array|size:4',
-    ]);
-
-    // Convert PIN array to string and hash it
-    $pinString = implode('', $request->pin);
-    $user->pin = Hash::make($pinString);
-    $user->save();
-
-    // Try to fetch the user from the DB manually
-    $dbUser = DB::table('users')->where('id', $user->id)->first();
-
-    if (!$dbUser) {
-        Log::error('User not found in DB after Auth:', ['user_id' => $user->id]);
-        return response()->json(['message' => 'User not found.'], 404);
-    }
-
-    Log::info('User fetched from DB:', (array) $dbUser);
-
-    // Check if wallet exists
-    $walletExists = DB::table('wallets')->where('user_id', $user->id)->exists();
-
-    if (!$walletExists) {
-        try {
-            DB::table('wallets')->insert([
-                'user_id' => $user->id,
-                'amount' => 5000,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-        } catch (\Exception $e) {
-            Log::error('Wallet creation failed:', ['error' => $e->getMessage()]);
-            return response()->json(['message' => 'Error creating wallet: ' . $e->getMessage()], 500);
+        if (!$user) {
+            Log::warning('No authenticated user found.');
+            return response()->json(['message' => 'Unauthorized.'], 401);
         }
+
+        // Log the authenticated user object
+        Log::info('Authenticated User:', $user->toArray());
+
+        // Validate the PIN
+        $request->validate([
+            'pin' => 'required|array|size:4',
+        ]);
+
+        // Convert PIN array to string and hash it
+        $pinString = implode('', $request->pin);
+        $user->pin = Hash::make($pinString);
+        $user->save();
+
+        // Try to fetch the user from the DB manually
+        $dbUser = DB::table('users')->where('id', $user->id)->first();
+
+        if (!$dbUser) {
+            Log::error('User not found in DB after Auth:', ['user_id' => $user->id]);
+            return response()->json(['message' => 'User not found.'], 404);
+        }
+
+        Log::info('User fetched from DB:', (array) $dbUser);
+
+        // Check if wallet exists
+        $walletExists = DB::table('wallets')->where('user_id', $user->id)->exists();
+
+        if (!$walletExists) {
+            try {
+                DB::table('wallets')->insert([
+                    'user_id' => $user->id,
+                    'amount' => 5000,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            } catch (\Exception $e) {
+                Log::error('Wallet creation failed:', ['error' => $e->getMessage()]);
+                return response()->json(['message' => 'Error creating wallet: ' . $e->getMessage()], 500);
+            }
+        }
+
+        return response()->json([
+            'message' => 'Transaction PIN created successfully!',
+            'user' => $user,
+        ]);
     }
-
-    return response()->json([
-        'message' => 'Transaction PIN created successfully!',
-        'user' => $user,
-    ]);
-}
-
-
-
 
     /**
      * Generate a unique user ID.
      */
     public function generateUniqueUserId()
-{
-    // Get the current year (4 digits) and day of the year (3 digits)
-    $year = date('Y'); // Get current year, e.g., "2025"
-    $dayOfYear = str_pad(date('z') + 1, 3, '0', STR_PAD_LEFT); // Get day of year, e.g., "150"
+    {
+        // Get the current year (4 digits) and day of the year (3 digits)
+        $year = date('Y'); // Get current year, e.g., "2025"
+        $dayOfYear = str_pad(date('z') + 1, 3, '0', STR_PAD_LEFT); // Get day of year, e.g., "150"
 
-    // Generate a random 4-digit number
-    $randomNumber = str_pad(rand(0, 9999), 4, '0', STR_PAD_LEFT); // Ensure it's 4 digits, e.g., "1234"
+        // Generate a random 4-digit number
+        $randomNumber = str_pad(rand(0, 9999), 4, '0', STR_PAD_LEFT); // Ensure it's 4 digits, e.g., "1234"
 
-    // Concatenate to form the user_id
-    $userId = $year . $dayOfYear . $randomNumber;
-
-    // Check for uniqueness (optional, but recommended)
-    while (User::where('user_id', $userId)->exists()) {
-        $randomNumber = str_pad(rand(0, 9999), 4, '0', STR_PAD_LEFT); // Regenerate the random part if not unique
+        // Concatenate to form the user_id
         $userId = $year . $dayOfYear . $randomNumber;
+
+        // Check for uniqueness (optional, but recommended)
+        while (User::where('user_id', $userId)->exists()) {
+            $randomNumber = str_pad(rand(0, 9999), 4, '0', STR_PAD_LEFT); // Regenerate the random part if not unique
+            $userId = $year . $dayOfYear . $randomNumber;
+        }
+
+        return $userId;
     }
-
-    return $userId;
-}
-
 }

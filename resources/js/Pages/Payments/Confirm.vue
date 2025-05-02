@@ -15,7 +15,7 @@
       <div class="flex-1 overflow-y-auto px-6 py-8 space-y-8">
         <!-- Transfer Illustration -->
         <div class="flex justify-center">
-          <img src="/assets/images/transfer-illustration.png" alt="Transfer" class="w-40 h-40" />
+          <img src="/images/transfer.jpg" alt="Transfer" class="w-40 h-40" />
         </div>
 
         <!-- Transfer Details Card -->

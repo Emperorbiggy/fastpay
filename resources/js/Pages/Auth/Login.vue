@@ -32,10 +32,10 @@
 
         <div class="mt-6 flex items-center justify-between">
           <button class="social-btn mr-2">
-            <img src="/images/google-icon.svg" class="h-5 w-5 mr-2" /> Google
+            <img src="/images/google_icon.png" class="h-5 w-5 mr-2" /> Google
           </button>
           <button class="social-btn ml-2">
-            <img src="/images/apple-icon.svg" class="h-5 w-5 mr-2" /> Apple
+            <img src="/images/apple-icon.png" class="h-5 w-5 mr-2" /> Apple
           </button>
         </div>
 
