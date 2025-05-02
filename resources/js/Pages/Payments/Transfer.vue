@@ -189,12 +189,27 @@ const fetchBalance = async () => {
   }
 }
 const verifyAccount = () => {
-  if (accountNumber.value === demoAccountNumber && selectedBank.value === 'Opay') {
-    accountName.value = demoAccountName
-    errorMessage.value = ''
+  // Check if the account number has been entered and is 10 digits
+  if (accountNumber.value && accountNumber.value.length === 10) {
+    // Check if the bank has been selected
+    if (selectedBank.value === '') {
+      errorMessage.value = 'Please select a bank'
+      isBankSelected.value = false
+    } else {
+      // Verify if the account number matches the demo value
+      if (accountNumber.value === demoAccountNumber && selectedBank.value === 'Opay') {
+        accountName.value = demoAccountName
+        errorMessage.value = ''
+        isBankSelected.value = true
+      } else {
+        accountName.value = ''
+        errorMessage.value = 'Invalid account number or bank'
+        isBankSelected.value = true
+      }
+    }
   } else {
     accountName.value = ''
-    errorMessage.value = 'Invalid account number or bank'
+    errorMessage.value = ''
   }
 }
 
