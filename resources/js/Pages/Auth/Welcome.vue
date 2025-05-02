@@ -4,7 +4,7 @@
 
         <!-- Header Illustration -->
         <div class="mb-6">
-          <img src="/images/success-illustration.png" alt="Success" class="mx-auto h-32 w-auto" />
+          <img src="/images/success-reg.png" alt="Success" class="mx-auto h-32 w-auto" />
         </div>
 
         <!-- Title -->
@@ -15,7 +15,7 @@
 
         <!-- Logo -->
         <div class="flex justify-center mb-8">
-          <img src="/images/logo.png" alt="App Logo" class="h-24 w-auto" />
+          <img src="/images/logo.svg" alt="App Logo" class="h-24 w-auto" />
         </div>
 
         <!-- Continue Button -->

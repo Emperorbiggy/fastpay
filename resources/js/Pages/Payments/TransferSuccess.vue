@@ -8,7 +8,7 @@
       <!-- Content -->
       <div class="flex-1 flex flex-col justify-center items-center px-6 py-8 space-y-6">
         <!-- Success Illustration -->
-        <img src="/images/success.jpg" alt="Success" class="w-40 h-40" />
+        <img src="/images/success.png" alt="Success" class="w-40 h-40" />
 
         <!-- Message -->
         <h2 class="text-2xl font-bold text-gray-800">Transfer Completed!</h2>
@@ -37,7 +37,7 @@
   import { router } from '@inertiajs/vue3'
 
   const goHome = () => {
-    router.visit('/') // Adjust if your home route is different
+    router.visit('/dashboard') // Adjust if your home route is different
   }
 
   const downloadReceipt = () => {
