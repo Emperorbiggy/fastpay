@@ -88,80 +88,84 @@
     </div>
   </template>
 
-  <script setup>
-  import { ref } from 'vue'
-  import { router } from '@inertiajs/vue3'
-  import axios from 'axios'
+<script setup>
+import { ref } from 'vue'
+import { router } from '@inertiajs/vue3'
+import axios from 'axios'
 
-  const pin = ref('')
-  const loading = ref(false) // Loading state
+const pin = ref('')
+const loading = ref(false) // Loading state
 
-  const addPin = (number) => {
-    if (pin.value.length < 4) {
-      pin.value += number
-    }
+const addPin = (number) => {
+  if (pin.value.length < 4) {
+    pin.value += number
   }
+}
 
-  const removePin = () => {
-    pin.value = pin.value.slice(0, -1)
-  }
+const removePin = () => {
+  pin.value = pin.value.slice(0, -1)
+}
 
-  const submitTransaction = async () => {
-    if (pin.value.length !== 4) return; // Ensure pin is 4 digits
+const submitTransaction = async () => {
+  if (pin.value.length !== 4) return; // Ensure pin is 4 digits
 
-    loading.value = true; // Show loader
+  loading.value = true; // Show loader
 
-    try {
-      // Make a request to verify the PIN
-      const response = await axios.post('/api/verify-pin', { pin: pin.value }, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}` // Bearer token from local storage
-        }
-      });
-
-      if (response.data.success) {
-        // PIN is verified successfully, now retrieve the transfer data from local storage
-        const transferData = JSON.parse(localStorage.getItem('transferData'));
-
-        // Check if the type is 'wallet' before making the transfer request
-        if (transferData && transferData.type === 'wallet') {
-          const { amount, user_id, description } = transferData;
-
-          // Send the transfer data to the /api/transfer endpoint
-          const transferResponse = await axios.post('/api/transfer', {
-            amount,
-            user_id,
-            description
-          }, {
-            headers: {
-              'Authorization': `Bearer ${localStorage.getItem('token')}` // Bearer token from local storage
-            }
-          });
-
-          // Handle transfer success response
-          if (transferResponse.data.message === 'Transfer successful!') {
-            // Redirect to the success page
-            router.visit('/success');
-          } else {
-            // Handle transfer failure
-            alert(transferResponse.data.message || 'Transfer failed');
-          }
-        }
-      } else {
-        alert(response.data.message || 'PIN verification failed');
+  try {
+    // Make a request to verify the PIN
+    const response = await axios.post('/api/verify-pin', { pin: pin.value }, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}` // Bearer token from local storage
       }
-    } catch (error) {
-      console.error('An error occurred during the transaction:', error);
-      alert('An error occurred. Please try again.');
-    } finally {
-      loading.value = false; // Hide loader after completion
-    }
-  }
+    });
 
-  const goBack = () => {
-    window.history.back()
+    if (response.data.success) {
+      // PIN is verified successfully, now retrieve the transfer data from local storage
+      const transferData = JSON.parse(localStorage.getItem('transferData'));
+
+      // If the type is 'wallet', proceed with the transfer request
+      if (transferData && transferData.type === 'wallet') {
+        const { amount, user_id, description } = transferData;
+
+        // Send the transfer data to the /api/transfer endpoint
+        const transferResponse = await axios.post('/api/transfer', {
+          amount,
+          user_id,
+          description
+        }, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}` // Bearer token from local storage
+          }
+        });
+
+        // Handle transfer success response
+        if (transferResponse.data.message === 'Transfer successful!') {
+          // Redirect to the success page
+          router.visit('/success');
+        } else {
+          // Handle transfer failure
+          alert(transferResponse.data.message || 'Transfer failed');
+        }
+      } else if (transferData && transferData.type === 'bank') {
+        // If the type is 'bank', redirect to the success page immediately
+        router.visit('/success');
+      }
+    } else {
+      alert(response.data.message || 'PIN verification failed');
+    }
+  } catch (error) {
+    console.error('An error occurred during the transaction:', error);
+    alert('An error occurred. Please try again.');
+  } finally {
+    loading.value = false; // Hide loader after completion
   }
-  </script>
+}
+
+const goBack = () => {
+  window.history.back()
+}
+</script>
+
  <style scoped>
  body {
    font-family: 'Inter', sans-serif;
