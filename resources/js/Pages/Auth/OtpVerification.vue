@@ -108,7 +108,7 @@
     }
 
     try {
-      const response = await fetch('http://localhost:8000/api/user', {
+      const response = await fetch('api/user', {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${accessToken}`,
@@ -165,7 +165,7 @@ function submitOtp() {
   if (otpCode.length === 4) {
     loading.value = true;
 
-    fetch('http://localhost:8000/api/verify-otp', {
+    fetch('/api/verify-otp', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

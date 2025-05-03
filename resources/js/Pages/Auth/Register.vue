@@ -47,7 +47,7 @@
 
         <p class="mt-6 text-sm">
           Already have an account?
-          <a href="/login" class="text-[#8541f5] font-semibold">Log in</a>
+          <a href="/" class="text-[#8541f5] font-semibold">Log in</a>
         </p>
       </div>
 
@@ -82,7 +82,7 @@ function submit() {
   loading.value = true
   popup.show = false
 
-  fetch('http://localhost:8000/api/register', {
+  fetch('/api/register', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
