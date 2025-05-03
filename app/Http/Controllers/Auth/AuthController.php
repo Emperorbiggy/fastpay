@@ -223,24 +223,24 @@ class AuthController extends Controller
      * Generate a unique user ID.
      */
     public function generateUniqueUserId()
-{
-    // Get the current year (4 digits) and day of the year (2 digits)
-    $year = date('Y');  // Full year (e.g., "2025")
-    $dayOfYear = str_pad(date('d'), 2, '0', STR_PAD_LEFT);  // Day of the month (e.g., "07")
+    {
+        // Get the current year (4 digits)
+        $year = date('Y');  // e.g., "2025"
 
-    // Generate a random 5-digit number
-    $randomNumber = str_pad(rand(0, 99999), 5, '0', STR_PAD_LEFT);
+        // Generate a random 6-digit number
+        $randomNumber = str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);  // Ensure 6 digits
 
-    // Concatenate to form the user_id
-    $userId = $year . $dayOfYear . $randomNumber;
+        // Concatenate to form the user_id
+        $userId = $year . $randomNumber;
 
-    // Check for uniqueness
-    while (User::where('user_id', $userId)->exists()) {
-        $randomNumber = str_pad(rand(0, 99999), 4, '0', STR_PAD_LEFT);
-        $userId = $year . $dayOfYear . $randomNumber;
+        // Check for uniqueness and regenerate if necessary
+        while (User::where('user_id', $userId)->exists()) {
+            $randomNumber = str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
+            $userId = $year . $randomNumber;
+        }
+
+        return $userId;
     }
 
-    return $userId;
-}
 
 }

@@ -97,12 +97,12 @@
       } else {
         // Display message
         message.value = 'Invalid login credentials.'
-        setTimeout(() => { message.value = '' }, 3000)  // Hide after 3 seconds
+        setTimeout(() => { message.value = '' }, 5000)  // Hide after 3 seconds
       }
     } catch (error) {
       console.error('Error during login:', error)
       message.value = 'Invalid login credentials.'
-      setTimeout(() => { message.value = '' }, 3000)  // Hide after 3 seconds
+      setTimeout(() => { message.value = '' }, 5000)  // Hide after 3 seconds
     } finally {
       loading.value = false  // Stop loading
     }

@@ -112,7 +112,7 @@ function submit() {
 
       setTimeout(() => {
         Inertia.visit('/otp')
-      }, 100)
+      }, 5000)
     })
     .catch(err => {
       console.error('Registration failed:', err)
@@ -131,7 +131,7 @@ function submit() {
       loading.value = false
       setTimeout(() => {
         popup.show = false
-      }, 100)
+      }, 5000)
     })
 }
 
