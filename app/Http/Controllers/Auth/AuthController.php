@@ -89,6 +89,12 @@ class AuthController extends Controller
         ]);
     }
 
+    public function getAllUsers()
+    {
+        $users = User::all();  // Fetch all users
+        return response()->json($users);
+    }
+
     public function login(Request $request)
     {
         // Validate email and password
@@ -107,12 +113,7 @@ class AuthController extends Controller
             return response()->json(['message' => 'Invalid credentials'], 401);
         }
 
-        // Log the user details if authentication is successful
-        Log::info('User logged in successfully:', [
-            'user_id' => $user->id,
-            'email' => $user->email,
-            'name' => $user->name,  // Log other relevant user information
-        ]);
+
 
         // Create token for the authenticated user
         $token = $user->createToken('auth_token')->plainTextToken;
@@ -234,7 +235,7 @@ class AuthController extends Controller
 
         // Check for uniqueness
         while (User::where('user_id', $userId)->exists()) {
-            $randomNumber = str_pad(rand(0, 9999), 4, '0', STR_PAD_LEFT); 
+            $randomNumber = str_pad(rand(0, 9999), 4, '0', STR_PAD_LEFT);
             $userId = $year . $dayOfYear . $randomNumber;
         }
 

@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 // Registration and Login routes
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+// Public route to get all users without authentication
+Route::get('/users', [AuthController::class, 'getAllUsers']);
 
 // OTP Verification route
 Route::post('/verify-otp', [AuthController::class, 'verifyOtp']);

@@ -9,10 +9,7 @@
               viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round"
                 d="M5.121 17.804A4 4 0 018 16h8a4 4 0 012.879 1.804M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
-            <!-- Loader -->
-    <div v-if="loading" class="absolute top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center z-40">
-      <div class="loader"></div>
-    </div>
+
           </div>
 
           <!-- Time Greeting -->
@@ -45,9 +42,12 @@
 
         </div>
       </div>
-      <div v-if="loading" class="absolute top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center z-40">
-  <div class="loader"></div>
-</div>
+      <div v-if="loading" class="absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center bg-opacity-50 bg-gray-800 z-50">
+        <div class="text-center">
+          <div class="border-t-4 border-b-4 border-custom-purple w-16 h-16 rounded-full animate-spin mx-auto"></div>
+          <p class="text-white mt-4">Please wait...</p>
+        </div>
+      </div>
 
       <!-- Weather Update -->
       <div v-if="weather" class="bg-[#8541f5] text-white p-4 mt-6 mx-4 rounded-xl shadow-md">
@@ -103,17 +103,18 @@
 </div>
 
 
-          <!-- Settings -->
-          <div class="flex flex-col items-center">
-            <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" stroke-width="2"
-              viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round"
-                d="M11.049 2.927c.3-.921 1.603-.921 1.902 0a1.724 1.724 0 002.591.947c.831-.579 1.936.256 1.556 1.165a1.724 1.724 0 002.065 2.065c.91-.38 1.744.725 1.165 1.556a1.724 1.724 0 00.947 2.591c.921.3.921 1.603 0 1.902a1.724 1.724 0 00-.947 2.591c.579.831-.256 1.936-1.165 1.556a1.724 1.724 0 00-2.065 2.065c.38.91-.725 1.744-1.556 1.165a1.724 1.724 0 00-2.591.947c-.3.921-1.603.921-1.902 0a1.724 1.724 0 00-2.591-.947c-.831.579-1.936-.256-1.556-1.165a1.724 1.724 0 00-2.065-2.065c-.91.38-1.744-.725-1.165-1.556a1.724 1.724 0 00-.947-2.591c-.921-.3-.921-1.603 0-1.902a1.724 1.724 0 00.947-2.591c-.579-.831.256-1.936 1.165-1.556a1.724 1.724 0 002.065-2.065c-.38-.91.725-1.744 1.556-1.165.78.544 1.814.049 2.065-.947z" />
-              <path stroke-linecap="round" stroke-linejoin="round"
-                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-            <span class="text-xs">Settings</span>
-          </div>
+
+
+  <div class="flex flex-col items-center cursor-pointer" @click="logout">
+  <!-- Logout Icon -->
+  <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round"
+      d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1" />
+  </svg>
+  <span class="text-xs">Logout</span>
+</div>
+
+
 
         </div>
       </div>
@@ -124,6 +125,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { Inertia } from '@inertiajs/inertia'
+import { router } from '@inertiajs/vue3'
 
 
 const loading = ref(false)
@@ -132,6 +134,12 @@ const greetingTime = ref('')
 const alarmIcon = ref('')
 const showSunrise = ref(false)
 const balance = ref(0) // Add a ref for balance
+const logout = () => {
+  loading.value = true
+  localStorage.removeItem('token') // only remove token
+  router.visit('/')
+}
+
 
 // Function to fetch balance with token from localStorage
 const fetchBalance = async () => {

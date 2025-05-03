@@ -10,8 +10,8 @@
 
       <div class="w-full max-w-md text-center">
         <!-- User verification icon and background -->
-        <div class="bg-custom-purple p-5 rounded-full inline-block mb-6">
-          <img src="/images/verification-icon.svg" alt="Verification Icon" class="h-16 w-16 mx-auto" />
+        <div class="p-5 rounded-full inline-block mb-6">
+          <img src="/images/verification.png" alt="Verification Icon" class="h-16 w-16 mx-auto" />
         </div>
 
         <!-- OTP Verification Header -->
@@ -43,7 +43,8 @@
         </button>
 
         <!-- Number Pad (Using grid for 3x4 layout with spacing) -->
-        <div class="grid grid-cols-3 gap-6 mb-6 justify-center mx-auto">
+        <div class="grid grid-cols-3 gap-4 mb-6 w-full max-w-xs mx-auto sm:max-w-sm md:max-w-md">
+
           <button @click="addDigit(1)" class="pad-btn">1</button>
           <button @click="addDigit(2)" class="pad-btn">2</button>
           <button @click="addDigit(3)" class="pad-btn">3</button>

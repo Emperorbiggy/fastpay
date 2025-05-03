@@ -46,8 +46,16 @@
       </div>
 
       <!-- Loader -->
-      <div v-if="loading" class="absolute top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center z-40">
-        <div class="loader"></div>
+      <div v-if="loading" class="absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center bg-opacity-50 bg-gray-800 z-50">
+        <div class="text-center">
+          <div class="border-t-4 border-b-4 border-custom-purple w-16 h-16 rounded-full animate-spin mx-auto"></div>
+          <p class="text-white mt-4">Please wait...</p>
+        </div>
+      </div>
+
+      <!-- Popup Message -->
+      <div v-if="message" class="fixed bottom-5 left-1/2 transform -translate-x-1/2 bg-[#8541f5] text-white px-6 py-4 rounded-lg shadow-lg">
+        <p>{{ message }}</p>
       </div>
     </div>
   </template>
@@ -64,6 +72,7 @@
   })
 
   const loading = ref(false)
+  const message = ref('')  // State for response message
 
   async function submit() {
     loading.value = true  // Start loading
@@ -78,7 +87,7 @@
       // Check if login was successful and store token
       if (response.data.token) {
         // Store the token in localStorage
-        localStorage.setItem('auth_token', response.data.token)
+        localStorage.setItem('token', response.data.token)
 
         // Optionally store user data if you need it
         localStorage.setItem('user', JSON.stringify(response.data.user))
@@ -86,12 +95,14 @@
         // Redirect to the dashboard using Inertia's visit method
         router.visit('/dashboard')
       } else {
-        // Handle failed login (optional)
-        alert('Invalid login credentials')
+        // Display message
+        message.value = 'Invalid login credentials.'
+        setTimeout(() => { message.value = '' }, 3000)  // Hide after 3 seconds
       }
     } catch (error) {
       console.error('Error during login:', error)
-      alert('An error occurred. Please try again later.')
+      message.value = 'Invalid login credentials.'
+      setTimeout(() => { message.value = '' }, 3000)  // Hide after 3 seconds
     } finally {
       loading.value = false  // Stop loading
     }

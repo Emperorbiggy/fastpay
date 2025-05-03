@@ -52,8 +52,11 @@
       </div>
 
       <!-- Full-screen loader -->
-      <div v-if="loading" class="absolute top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center z-40">
-        <div class="loader"></div>
+      <div v-if="loading" class="absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center bg-opacity-50 bg-gray-800 z-50">
+        <div class="text-center">
+          <div class="border-t-4 border-b-4 border-custom-purple w-16 h-16 rounded-full animate-spin mx-auto"></div>
+          <p class="text-white mt-4">Please wait...</p>
+        </div>
       </div>
     </div>
   </template>
@@ -97,22 +100,33 @@ function submit() {
       return res.json()
     })
     .then(data => {
-  console.log('Registration success:', data)
+      console.log('Registration success:', data)
 
-  // Store the token correctly from the nested user object
-  localStorage.setItem('token', data.user.token)
+      localStorage.setItem('token', data.user.token)
 
-  popup.message = data.message || 'Registration successful!'
-  popup.type = 'success'
-  popup.show = true
+      popup.message = data.message || 'Registration successful!'
+      popup.type = 'success'
+      popup.show = true
 
-  Object.keys(form).forEach(k => form[k] = '')
+      Object.keys(form).forEach(k => form[k] = '')
 
-  setTimeout(() => {
-    Inertia.visit('/otp')
-  }, 10000)
-})
+      setTimeout(() => {
+        Inertia.visit('/otp')
+      }, 10000)
+    })
+    .catch(err => {
+      console.error('Registration failed:', err)
 
+      popup.message = err.message || 'Something went wrong. Please try again.'
+
+      // Handle validation errors (e.g., Laravel-style errors)
+      if (err.errors) {
+        popup.message = Object.values(err.errors).flat().join(' ')
+      }
+
+      popup.type = 'error'
+      popup.show = true
+    })
     .finally(() => {
       loading.value = false
       setTimeout(() => {
@@ -120,6 +134,7 @@ function submit() {
       }, 10000)
     })
 }
+
 </script>
 
 
@@ -131,6 +146,7 @@ function submit() {
   .social-btn {
     @apply flex items-center border w-full justify-center py-2 rounded-lg;
   }
+
   .loader {
     width: 50px;
     height: 50px;

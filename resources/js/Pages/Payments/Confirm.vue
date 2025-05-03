@@ -11,6 +11,19 @@
         <h1 class="text-xl font-semibold">Confirm Transfer</h1>
       </div>
 
+      <!-- Loader -->
+      <div
+        v-if="loading"
+        class="absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center bg-opacity-50 bg-gray-800 z-50"
+      >
+      <div v-if="loading" class="absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center bg-opacity-50 bg-gray-800 z-50">
+        <div class="text-center">
+          <div class="border-t-4 border-b-4 border-custom-purple w-16 h-16 rounded-full animate-spin mx-auto"></div>
+          <p class="text-white mt-4">Please wait...</p>
+        </div>
+      </div>
+    </div>
+
       <!-- Scrollable Content -->
       <div class="flex-1 overflow-y-auto px-6 py-8 space-y-8">
         <!-- Transfer Illustration -->
@@ -52,16 +65,40 @@
   </template>
 
   <script setup>
-  import { router, usePage } from '@inertiajs/vue3'
+  import { ref } from 'vue'
+  import { router } from '@inertiajs/vue3'
 
-  // Get data from local storage
+  // Get data from localStorage
   const transferData = JSON.parse(localStorage.getItem('transferData'))
+  const loading = ref(false)
 
   const goBack = () => {
     window.history.back()
   }
 
   const goToPinPage = () => {
-    router.visit('/confirm-pin') // Inertia visit
+    loading.value = true
+    setTimeout(() => {
+      router.visit('/confirm-pin')
+    }, 500)
   }
   </script>
+
+  <style scoped>
+  body {
+    font-family: 'Inter', sans-serif;
+  }
+  .loader {
+    width: 50px;
+    height: 50px;
+    border: 4px solid #8541f5;
+    border-top: 4px solid transparent;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  </style>

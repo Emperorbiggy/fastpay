@@ -6,8 +6,11 @@
       </div>
 
       <!-- Loader -->
-      <div v-if="loading" class="absolute top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center z-40">
-        <div class="loader"></div>
+      <div v-if="loading" class="absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center bg-opacity-50 bg-gray-800 z-50">
+        <div class="text-center">
+          <div class="border-t-4 border-b-4 border-custom-purple w-16 h-16 rounded-full animate-spin mx-auto"></div>
+          <p class="text-white mt-4">Please wait...</p>
+        </div>
       </div>
 
       <!-- PIN Input Section -->
@@ -85,10 +88,10 @@
           </button>
 
           <!-- Back Home and Download Receipt -->
-          <div class="flex justify-between mt-4">
+          <!-- <div class="flex justify-between mt-4">
             <button @click="goHome" class="text-[#8541f5] text-sm">Back Home</button>
             <button @click="downloadReceipt" class="text-[#8541f5] text-sm">Download Receipt</button>
-          </div>
+          </div> -->
         </div>
       </div>
     </div>
