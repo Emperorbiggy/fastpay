@@ -271,9 +271,11 @@ const isAmountValid = computed(() => {
   return true
 })
 
+import { Inertia } from '@inertiajs/inertia';
+
 const makeTransfer = () => {
-  const isFastPay = activeTab.value === 'FastPay'
-  loading.value = true // Show loader before making the API request
+  const isFastPay = activeTab.value === 'FastPay';
+  loading.value = true; // Show loader before making the API request
 
   const transferData = {
     amount: amount.value,
@@ -285,19 +287,22 @@ const makeTransfer = () => {
     ...(isFastPay
       ? { user_id: user_id.value }
       : { account_number: accountNumber.value })
-  }
+  };
 
   // Save transfer data to localStorage
-  localStorage.setItem('transferData', JSON.stringify(transferData))
+  localStorage.setItem('transferData', JSON.stringify(transferData));
 
-  // Navigate to confirm page using Inertia
-  Inertia.visit(route('confirm'), {
-    method: 'get',
+  // Use Inertia visit to navigate to the /confirm route
+  Inertia.visit('/confirm', {
+    method: 'get', // Optional, defaults to 'get'
+    preserveState: true, // Optional, to preserve page state
     onFinish: () => {
-      loading.value = false // Hide loader after navigation
+      loading.value = false; // Hide loader after navigation is finished
     }
-  })
-}
+  });
+};
+
+  
 
 
 const goBack = () => {
