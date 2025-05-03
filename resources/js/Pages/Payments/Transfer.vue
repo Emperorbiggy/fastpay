@@ -1,100 +1,102 @@
 <template>
-    <div class="min-h-screen bg-gray-50 flex flex-col">
-      <!-- Header -->
-      <div class="relative flex items-center justify-center px-6 py-5 bg-gradient-to-r from-[#8541f5] to-[#a75ef5] text-white shadow-lg">
-        <button @click="goBack" class="absolute left-4 text-white">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2"
-               viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M15 18l-6-6 6-6" />
-          </svg>
+  <div class="min-h-screen bg-gray-50 flex flex-col">
+    <!-- Header -->
+    <div class="relative flex items-center justify-center px-6 py-5 bg-gradient-to-r from-[#8541f5] to-[#a75ef5] text-white shadow-lg">
+      <button @click="goBack" class="absolute left-4 text-white">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2"
+             viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M15 18l-6-6 6-6" />
+        </svg>
+      </button>
+      <h1 class="text-xl font-semibold">Transfer</h1>
+    </div>
+
+    <!-- Scrollable content -->
+    <div class="flex-1 overflow-y-auto pb-36">
+      <!-- Tabs -->
+      <div class="flex mt-4 border-b border-gray-300">
+        <button
+          :class="{
+            'text-white bg-[#8541f5]': activeTab === 'FastPay',
+            'text-[#8541f5] bg-white': activeTab !== 'FastPay'
+          }"
+          class="w-1/2 py-3 text-center font-semibold transition duration-300"
+          @click="activeTab = 'FastPay'"
+        >
+          FastPay
         </button>
-        <h1 class="text-xl font-semibold">Transfer</h1>
+        <button
+          :class="{
+            'text-white bg-[#8541f5]': activeTab === 'Bank',
+            'text-[#8541f5] bg-white': activeTab !== 'Bank'
+          }"
+          class="w-1/2 py-3 text-center font-semibold transition duration-300"
+          @click="activeTab = 'Bank'"
+        >
+          Bank
+        </button>
       </div>
 
-      <!-- Scrollable content -->
-      <div class="flex-1 overflow-y-auto pb-36">
-        <!-- Tabs -->
-        <div class="flex mt-4 border-b border-gray-300">
-          <button
-            :class="{
-              'text-white bg-[#8541f5]': activeTab === 'FastPay',
-              'text-[#8541f5] bg-white': activeTab !== 'FastPay'
-            }"
-            class="w-1/2 py-3 text-center font-semibold transition duration-300"
-            @click="activeTab = 'FastPay'"
-          >
-            FastPay
-          </button>
-          <button
-            :class="{
-              'text-white bg-[#8541f5]': activeTab === 'Bank',
-              'text-[#8541f5] bg-white': activeTab !== 'Bank'
-            }"
-            class="w-1/2 py-3 text-center font-semibold transition duration-300"
-            @click="activeTab = 'Bank'"
-          >
-            Bank
-          </button>
+      <!-- Amount Input -->
+      <div class="mt-6 mx-6">
+        <div class="relative">
+          <input
+            v-model="amount"
+            type="number"
+            placeholder="Enter amount"
+            class="w-full py-4 px-6 rounded-xl bg-white shadow-xl focus:ring-[#8541f5] focus:border-[#8541f5] transition duration-300 border-2 border-gray-300"
+          />
+          <span class="absolute right-6 top-1/2 transform -translate-y-1/2 text-[#8541f5] text-sm font-semibold">
+            ₦{{ currentBalance }}
+          </span>
+        </div>
+        <p v-if="errorMessage" class="text-red-500 text-sm mt-1">{{ errorMessage }}</p>
+      </div>
+
+      <!-- FastPay Form -->
+      <div v-if="activeTab === 'FastPay'" class="mx-6 mt-8 space-y-6">
+        <div>
+          <label for="user_id" class="block text-sm font-medium text-gray-800">User Id</label>
+          <input
+            v-model="user_id"
+            type="text"
+            id="user_id"
+            placeholder="Enter user ID"
+            class="w-full py-4 px-6 rounded-xl bg-white shadow-xl border-2 border-gray-300 focus:ring-[#8541f5] focus:border-[#8541f5] transition duration-300"
+          />
         </div>
 
-        <!-- Amount -->
-<div class="mt-6 mx-6">
-  <div class="relative">
-    <input
-      v-model="amount"
-      type="number"
-      placeholder="Enter amount"
-      class="w-full py-4 px-6 rounded-xl bg-white shadow-xl focus:ring-[#8541f5] focus:border-[#8541f5] transition duration-300 border-2 border-gray-300"
-    />
-    <span class="absolute right-6 top-1/2 transform -translate-y-1/2 text-[#8541f5] text-sm font-semibold">
-      ₦{{ currentBalance }}
-    </span>
-  </div>
-  <p v-if="errorMessage" class="text-red-500 text-sm mt-1">{{ errorMessage }}</p>
-</div>
-
-
-        <!-- FastPay Form -->
-        <div v-if="activeTab === 'FastPay'" class="mx-6 mt-8 space-y-6">
-          <div>
-            <label for="user_id" class="block text-sm font-medium text-gray-800">User Id</label>
-            <input
-              v-model="user_id"
-              type="text"
-              id="user_id"
-              placeholder="Enter user ID"
-              class="w-full py-4 px-6 rounded-xl bg-white shadow-xl border-2 border-gray-300 focus:ring-[#8541f5] focus:border-[#8541f5] transition duration-300"
-            />
-          </div>
-
-          <div>
-            <label for="accountName" class="block text-sm font-medium text-gray-800">Account Name</label>
-            <input
-              v-model="accountName"
-              type="text"
-              id="accountName"
-              placeholder="Account name will appear here"
-              readonly
-              class="w-full py-4 px-6 rounded-xl bg-gray-100 text-gray-500 border-2 border-gray-300"
-            />
-          </div>
-
-          <div>
-            <label for="description" class="block text-sm font-medium text-gray-800">Description</label>
-            <textarea
-              v-model="description"
-              id="description"
-              placeholder="Enter description"
-              class="w-full py-4 px-6 rounded-xl bg-white shadow-xl border-2 border-gray-300 focus:ring-[#8541f5] focus:border-[#8541f5]"
-            ></textarea>
-          </div>
+        <div>
+          <label for="accountName" class="block text-sm font-medium text-gray-800">Account Name</label>
+          <input
+            v-model="accountName"
+            type="text"
+            id="accountName"
+            placeholder="Account name will appear here"
+            readonly
+            class="w-full py-4 px-6 rounded-xl bg-gray-100 text-gray-500 border-2 border-gray-300"
+          />
         </div>
 
-        <!-- Bank Form -->
+        <div>
+          <label for="description" class="block text-sm font-medium text-gray-800">Description</label>
+          <textarea
+            v-model="description"
+            id="description"
+            placeholder="Enter description"
+            class="w-full py-4 px-6 rounded-xl bg-white shadow-xl border-2 border-gray-300 focus:ring-[#8541f5] focus:border-[#8541f5]"
+          ></textarea>
+        </div>
+      </div>
+
+      <!-- Bank Form -->
       <div v-if="activeTab === 'Bank'" class="mx-6 mt-8 space-y-6">
         <div>
           <label for="bank" class="block text-sm font-medium text-gray-800">Bank</label>
-          <select v-model="selectedBank" id="bank" class="w-full py-4 px-6 rounded-xl bg-white shadow-xl border-2 border-gray-300 focus:ring-[#8541f5] focus:border-[#8541f5]" @change="verifyAccount">
+          <select v-model="selectedBank" id="bank"
+            class="w-full py-4 px-6 rounded-xl bg-white shadow-xl border-2 border-gray-300 focus:ring-[#8541f5] focus:border-[#8541f5]"
+            @change="verifyAccount"
+          >
             <option value="Opay">Opay</option>
             <option value="Zenith Bank">Zenith Bank</option>
             <option value="Wema Bank">Wema Bank</option>
@@ -103,13 +105,27 @@
 
         <div>
           <label for="accountNumber" class="block text-sm font-medium text-gray-800">Account Number</label>
-          <input v-model="accountNumber" type="text" id="accountNumber" placeholder="Enter account number" class="w-full py-4 px-6 rounded-xl bg-white shadow-xl border-2 border-gray-300 focus:ring-[#8541f5] focus:border-[#8541f5]" @change="verifyAccount"/>
+          <input
+            v-model="accountNumber"
+            type="text"
+            id="accountNumber"
+            placeholder="Enter account number"
+            class="w-full py-4 px-6 rounded-xl bg-white shadow-xl border-2 border-gray-300 focus:ring-[#8541f5] focus:border-[#8541f5]"
+            @change="verifyAccount"
+          />
         </div>
 
         <div>
           <label for="accountName" class="block text-sm font-medium text-gray-800">Account Name</label>
           <div class="relative">
-            <input v-model="accountName" type="text" id="accountName" placeholder="Account name will appear here" readonly class="w-full py-4 px-6 rounded-xl bg-gray-100 text-gray-500 border-2 border-gray-300" />
+            <input
+              v-model="accountName"
+              type="text"
+              id="accountName"
+              placeholder="Account name will appear here"
+              readonly
+              class="w-full py-4 px-6 rounded-xl bg-gray-100 text-gray-500 border-2 border-gray-300"
+            />
             <div v-if="loadingAccountName" class="absolute right-4 top-1/2 transform -translate-y-1/2">
               <svg class="animate-spin h-5 w-5 text-[#8541f5]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -119,21 +135,19 @@
           </div>
         </div>
 
-
-
-          <div>
-            <label for="description" class="block text-sm font-medium text-gray-800">Description</label>
-            <textarea
-              v-model="description"
-              id="description"
-              placeholder="Enter description"
-              class="w-full py-4 px-6 rounded-xl bg-white shadow-xl border-2 border-gray-300 focus:ring-[#8541f5] focus:border-[#8541f5]"
-            ></textarea>
-          </div>
+        <div>
+          <label for="description" class="block text-sm font-medium text-gray-800">Description</label>
+          <textarea
+            v-model="description"
+            id="description"
+            placeholder="Enter description"
+            class="w-full py-4 px-6 rounded-xl bg-white shadow-xl border-2 border-gray-300 focus:ring-[#8541f5] focus:border-[#8541f5]"
+          ></textarea>
         </div>
       </div>
+    </div>
 
-      <!-- Footer Transfer Button -->
+    <!-- Transfer Button -->
     <div class="fixed bottom-0 w-full bg-white py-4 shadow-lg px-6">
       <button
         :disabled="!isAmountValid || !accountName || !description"
@@ -143,14 +157,16 @@
         Transfer
       </button>
     </div>
+
+    <!-- Loader -->
     <div v-if="loading" class="absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center bg-opacity-50 bg-gray-800 z-50">
-        <div class="text-center">
-          <div class="border-t-4 border-b-4 border-custom-purple w-16 h-16 rounded-full animate-spin mx-auto"></div>
-          <p class="text-white mt-4">Please wait...</p>
-        </div>
+      <div class="text-center">
+        <div class="border-t-4 border-b-4 border-[#8541f5] w-16 h-16 rounded-full animate-spin mx-auto"></div>
+        <p class="text-white mt-4">Please wait...</p>
       </div>
     </div>
-  </template>
+  </div>
+</template>
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
@@ -168,11 +184,10 @@ const user_id = ref('')
 const loadingAccountName = ref(false)
 const loading = ref(false)
 
-// Demo account details
+// Demo data
 const demoAccountNumber = '9139986596'
 const demoAccountName = 'Ayodeji Samuel Ojeva'
 
-// Fetch balance on mount
 onMounted(async () => {
   await fetchBalance()
 })
@@ -192,23 +207,18 @@ const fetchBalance = async () => {
     console.error('Error fetching balance:', error)
   }
 }
+
 const verifyAccount = () => {
-  // Check if the account number has been entered and is 10 digits
-  if (accountNumber.value && accountNumber.value.length === 10) {
-    // Check if the bank has been selected
+  if (accountNumber.value.length === 10) {
     if (selectedBank.value === '') {
       errorMessage.value = 'Please select a bank'
-      isBankSelected.value = false
     } else {
-      // Verify if the account number matches the demo value
       if (accountNumber.value === demoAccountNumber && selectedBank.value === 'Opay') {
         accountName.value = demoAccountName
         errorMessage.value = ''
-        isBankSelected.value = true
       } else {
         accountName.value = ''
         errorMessage.value = 'Invalid account number or bank'
-        isBankSelected.value = true
       }
     }
   } else {
@@ -217,10 +227,9 @@ const verifyAccount = () => {
   }
 }
 
-// Watch for changes in user_id and verify account
 watch(user_id, async (newVal) => {
   if (newVal.length === 10) {
-    loading.value = true // Show loader before making the API request
+    loading.value = true
     try {
       const response = await fetch(`/api/verify-account/${newVal}`, {
         headers: {
@@ -228,7 +237,6 @@ watch(user_id, async (newVal) => {
         },
       })
       const data = await response.json()
-
       if (data.success) {
         accountName.value = data.full_name
         errorMessage.value = ''
@@ -240,42 +248,32 @@ watch(user_id, async (newVal) => {
       accountName.value = ''
       errorMessage.value = 'Failed to verify account'
     } finally {
-      loading.value = false // Hide loader once the request is finished
+      loading.value = false
     }
   } else {
     accountName.value = ''
-    loading.value = false // Ensure loader is hidden if user_id is not valid
+    loading.value = false
   }
 })
 
-
-// Validate amount
 const isAmountValid = computed(() => {
   const amt = parseFloat(amount.value)
-  if (isNaN(amt)) {
-    errorMessage.value = ''
-    return false
-  }
-
+  if (isNaN(amt)) return false
   if (amt < 100) {
     errorMessage.value = 'Minimum amount is ₦100'
     return false
   }
-
   if (amt > currentBalance.value) {
     errorMessage.value = 'Insufficient balance'
     return false
   }
-
   errorMessage.value = ''
   return true
 })
 
-import { Inertia } from '@inertiajs/inertia';
-
 const makeTransfer = () => {
-  const isFastPay = activeTab.value === 'FastPay';
-  loading.value = true; // Show loader before making the API request
+  loading.value = true
+  const isFastPay = activeTab.value === 'FastPay'
 
   const transferData = {
     amount: amount.value,
@@ -286,37 +284,28 @@ const makeTransfer = () => {
     bank: isFastPay ? 'FastPay' : selectedBank.value,
     ...(isFastPay
       ? { user_id: user_id.value }
-      : { account_number: accountNumber.value })
-  };
+      : { account_number: accountNumber.value }),
+  }
 
-  // Save transfer data to localStorage
-  localStorage.setItem('transferData', JSON.stringify(transferData));
+  localStorage.setItem('transferData', JSON.stringify(transferData))
 
-  // Use Inertia visit to navigate to the /confirm route
   Inertia.visit('/confirm', {
-    method: 'get', // Optional, defaults to 'get'
-    preserveState: true, // Optional, to preserve page state
+    method: 'get',
+    preserveState: true,
     onFinish: () => {
-      loading.value = false; // Hide loader after navigation is finished
-    }
-  });
-};
-
-  
-
-
-const goBack = () => {
-  window.history.back()
+      loading.value = false
+    },
+  })
 }
+
+const goBack = () => window.history.back()
 </script>
 
-
-
-  <style scoped>
-  body {
-    font-family: 'Inter', sans-serif;
-  }
-  .loader {
+<style scoped>
+body {
+  font-family: 'Inter', sans-serif;
+}
+.loader {
   width: 50px;
   height: 50px;
   border: 4px solid #8541f5;
@@ -324,11 +313,9 @@ const goBack = () => {
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
-
 @keyframes spin {
   to {
     transform: rotate(360deg);
   }
 }
-
-  </style>
+</style>
